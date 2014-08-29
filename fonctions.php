@@ -63,18 +63,44 @@ function test($variable, $nom=null, $log = false, $nomFichierLog = "error.log"){
 }
 
 
+function ToString($val)
+{
+	if (is_object($val)) $ret="{Objet} ".get_class($val);
+	else if (is_array($val))
+	{
+		$ret="";
+		foreach ($val as $k=>$v) $ret="{$ret}".($ret?" , ":"")."{$k}=>".ToString($v);
+		$ret="array({$ret})";
+	}
+	else $ret=$val;
+
+	return($ret);
+}
+function GetValue(&$table,$key1,$key2=NULL,$default="")
+{
+	if($table && is_array($table))
+	{
+		if (is_array($table) && array_key_exists($key1,$table))
+		{
+			if ($key2!==NULL) return(GetValue($table[$key1],$key2,NULL,$default));
+			else return($table[$key1]);
+		}
+		else return($default);
+	}
+	else return($default);
+}
 /*
  * si $niveau=0, tous les niveaux sont affichés,
- * sinon, c'est seulement le niveau indiqué qui est affiché,
- */
-function debug($complete,$html)
+* sinon, c'est seulement le niveau indiqué qui est affiché,
+*/
+function debug($complete=null,$html=true)
 {
 	$str="";
-    $liste=debug_backtrace();
+	$liste=debug_backtrace();
 
 	foreach($liste as $key=>$value)
 	{
- 
+
 		$oper=GetValue($value,"type");
 		$file=basename(GetValue($value,"file"));
 		$line=GetValue($value,"line");
@@ -88,27 +114,26 @@ function debug($complete,$html)
 		} else $myargs="";
 		//$myargs="";
 		$space="&nbsp;&nbsp;&nbsp;";
-		if (!$oper && (in_array($fct,array("WriteLog","ErrorHandler","trigger_error","fDebug")))) 
+		if (!$oper && (in_array($fct,array("WriteLog","ErrorHandler","trigger_error","fDebug"))))
 			continue;
-		if ($html) 
+		if ($html)
 			$str="<tr><td width='200' nowrap>- {$file}</td><td width='100' nowrap>ligne: {$line}</td>
-				<td nowrap><b>{$cls}{$oper}{$fct} ( </b>{$myargs}<b> )</b>
-				</td></tr>{$str}";
-		else 
+			<td nowrap><b>{$cls}{$oper}{$fct} ( </b>{$myargs}<b> )</b>
+			</td></tr>{$str}";
+		else
 			$str = "\tFile: {$file}\tLine:{$line}\tClass:{$cls}{$oper}{$fct}({$myargs})\n{$str}";
-		    
-	} 
+
+	}
 	if ($html) {
-		if ($complete) {
-			$str="{$str}<tr><td colspan='3' style='color:#770000'>{$complete}</td></tr>";
-		}
-	
-		$str="<tr><td colspan='3'  bgcolor='#000000'>&nbsp;</td></tr>{$str}";
-		$str="<table width='80%' cellspacing='0' cellpadding='1' style='font-size: 11px;'>{$str}</table>";
+	if ($complete) {
+	$str="{$str}<tr><td colspan='3' style='color:#770000'>{$complete}</td></tr>";
+	}
+
+	$str="<tr><td colspan='3'  bgcolor='#000000'>&nbsp;</td></tr>{$str}";
+	$str="<table width='80%' cellspacing='0' cellpadding='1' style='font-size: 11px;'>{$str}</table>";
 	} else {
-		$debut = $complete?$complete:"Error";
-		$str="-->{$debut}:\n{$str}";
+	$debut = $complete?$complete:"Error";
+	$str="-->{$debut}:\n{$str}";
 	}
 	echo $str;
-}
-
+	}
