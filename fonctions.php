@@ -4,8 +4,13 @@
  * Affiche la variable ou la log dans error.log
  * @copyright : Salles stéphane gsmurf7@gmail.com - distribué librement pour le bien de tous ^^
  * @access public
+ * 
+ * @param type $variable Valeur de la variable à afficher
+ * @param string $nom Labèle à ajouter
+ * @param boolean $log doit on logger dans un fichier ? Si false alors on affiche
+ * @param string $nomFichierLog nom du fichier dans lequel on log
  * @return void
- **/
+ */
 function test($variable, $nom=null, $log = false, $nomFichierLog = "error.log"){
 	$liste=debug_backtrace();
 	if (!function_exists("implode_with_keys")) {
