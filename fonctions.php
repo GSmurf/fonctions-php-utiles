@@ -60,9 +60,9 @@ function test($variable, $nom=null, $log = false, $nomFichierLog = "error.log"){
 	} else {
 		$file = fopen($nomFichierLog, 'a');
 		if (is_array($variable)) {
-			$variable = implode_with_keys(",", $variable);
+			$variable = "[".implode_with_keys(",", $variable)."]";
 		}//if
-		fputs($file, "\n".date("d/m/y H:i:s || ").$nom." : ".$variable);
+		fputs($file, "\n".date("d/m/y H:i:s: ").$nom." : ".$variable);
 		fclose($file);
 	}//if
 }
